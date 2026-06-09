@@ -15,19 +15,31 @@
 
 ## Contexte
 
-Ce projet est un Proof of Concept (POC) illustre le fonctionnement réel de la conception d'un workflow complet autour de la gestion automatisée des tickets clients, capable d'orchestrer intelligemment toute requête utilisateur issue de situations concrètes et réelles. Pour simuler des cas réels, le projet prend l'exemple de la SNCF, qui gère quotidiennement des demandes clients exhaustives, répétitives et complexes. Notre cas d'usage est donc particulièrement pertinent.
+Ce projet est un **POC** qui illustre le fonctionnement réel de la conception d'un workflow complet autour de la gestion automatisée des tickets clients, capable d'orchestrer intelligemment toute requête utilisateur issue de situations concrètes et réelles. Pour simuler des cas réels, le projet prend l'exemple de la SNCF, qui gère quotidiennement des demandes clients exhaustives, répétitives et complexes. Notre cas d'usage est donc particulièrement pertinent.
 
-L'architecture repose sur une application full-stack (**backend** + **frontend**) dans laquelle des nœuds agentiques sont orchestrés côté backend, tandis que le frontend a pour objectif d'illustrer simplement ce workflow en action à travers une interface de chat. Concrètement, des tickets sont envoyés à une API **FastAPI**, stockés dans **Supabase** (**PostgreSQL**), mis en file d'attente via **Redis**, puis traités de manière asynchrone par un worker **Celery**.
+## Architecture
 
+L'architecture de l'application repose sur un stack *full-stack* (**backend** + **frontend**) dans lequel un workflow de nœuds agentiques de **PydanticAI** est orchestré côté backend, tandis que le frontend a pour objectif d'illustrer simplement ce workflow en action à travers un chat UI. Concrètement, des tickets sont envoyés à une API **FastAPI**, stockés dans **Supabase** (**PostgreSQL**), mis en file d'attente via **Redis**, puis traités de manière asynchrone par un worker **Celery**.
+
+## Workflow
 Chaque ticket traverse un workflow multi-nœuds comme illustre ci-dessous
 
--- mettre la photo du workflow --
-
+```mermaid
+flowchart LR
+    Ticket([Ticket]) --> ClassificationIntention[Classification d'intention]
+    ClassificationIntention --> Filtrage[Filtrage]
+    Filtrage --> Routage{Routage}
+    Routage -->|Fermer| FermeTicket[Fermeture]
+    Routage -->|Escalader| EscaladeHumain[Escalade à un humain]
+    Routage -->|Traiter| GenerationReponse[Génération de réponse]
+    GenerationReponse --> EnvoiReponse[Envoi de réponse]
+```
 
 — classification de l'intention, détection de spam, validation de l'actionnabilité, et génération d'une réponse ancrée via RAG sur une base de connaissances pgvector — avant qu'une réponse en français ne soit retournée au client.
 
 > *Ce prototype n'est pas en production. Il vise à prouver  que chaque composant fonctionne, que l'architecture est solide et scalable.*
 
+**Gains operationnels**
 ---
 
 ## Démonstration
