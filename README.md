@@ -174,4 +174,4 @@ Les deux messages ont correctement été classifiés.
 
 Ce prototype démontre qu'il est possible d'automatiser intelligemment le traitement des tickets clients : les questions courantes sont répondues via RAG, les spams filtrés, et les cas sensibles escaladés à un humain.
 
-En pratique, cela réduit significativement la charge répétitive des équipes support, tout en gardant un humain dans la boucle là où c'est nécessaire.
+En pratique, cela **réduit significativement la charge répétitive des équipes support**, tout en gardant un humain dans la boucle là où c'est nécessaire.
