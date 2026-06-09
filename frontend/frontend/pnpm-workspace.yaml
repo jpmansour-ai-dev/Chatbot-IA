@@ -1,0 +1,4 @@
+# esbuild ships a postinstall that links its platform binary; allow it to run.
+# (pnpm 11 blocks dependency build scripts unless explicitly allow-listed here.)
+allowBuilds:
+  esbuild: true
