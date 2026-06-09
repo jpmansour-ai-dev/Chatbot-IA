@@ -22,6 +22,8 @@ Ce projet est un **POC** qui illustre le fonctionnement réel de la conception d
 L'architecture de l'application repose sur un stack *full-stack* (**backend** + **frontend**) dans lequel un workflow de nœuds agentiques de **PydanticAI** est orchestré côté backend, tandis que le frontend a pour objectif d'illustrer simplement ce workflow en action à travers un chat UI. Concrètement, des tickets sont envoyés à une API **FastAPI**, stockés dans **Supabase** (**PostgreSQL**), mis en file d'attente via **Redis**, puis traités de manière asynchrone par un worker **Celery**.
 
 ## Workflow
+
+Les demandes utilisateurs soumises via le chat UI, sont envoyes a une API, qui cause le declenchement de ce workflow, quipermettra l'automatisation du traitement, et est designe de la maniere suivante:
 Chaque ticket traverse un workflow multi-nœuds comme illustre ci-dessous
 
 ```mermaid
@@ -35,11 +37,24 @@ flowchart LR
     GenerationReponse --> EnvoiReponse[Envoi de réponse]
 ```
 
-— classification de l'intention, détection de spam, validation de l'actionnabilité, et génération d'une réponse ancrée via RAG sur une base de connaissances pgvector — avant qu'une réponse en français ne soit retournée au client.
+### Étapes
 
-> *Ce prototype n'est pas en production. Il vise à prouver  que chaque composant fonctionne, que l'architecture est solide et scalable.*
+**Réception**<br>
+Le ticket arrive via **FastAPI** et est stocké en base (**Supabase**).
 
-**Gains operationnels**
+**Traitement async**<br>
+Le ticket est mis en file d'attente (**Redis**), un **worker Celery** le récupère et lance le workflow.
+
+**Analyse** *(3 sous-agents en parallèle)*
+- **Classification d'intention** : L’IA (**PydanticAI** + **OpenAI**) détermine l’intention (ex: "conditions", "délais", "retard de train", "remboursement")
+- **Filtrage** : Détection de spam""
+- **Routage** : Selon l’analyse, le ticket est fermé, escaladé à un humain, ou traité automatiquement.
+- **Génération de réponse** : Si traitement automatique, l’IA génère une réponse pertinente via **RAG**, en se basant sur la base de vecteurs **pgvector**.
+- **Envoi de réponse** : La réponse est envoyée au client ou le ticket est escaladé.
+
+
+### Gains opérationnels
+
 ---
 
 ## Démonstration
