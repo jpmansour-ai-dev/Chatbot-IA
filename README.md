@@ -1,15 +1,15 @@
 # Assistant IA pour le support client
 **Présentation d'un prototype fonctionnel : système IA de traitement automatique des tickets client.**
 
-![Python](https://img.shields.io/badge/Python-3.13%2B-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.123-009688)
-![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
-![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4.1-412991)
-![Celery](https://img.shields.io/badge/Celery-Redis-37814A)
-![Supabase](https://img.shields.io/badge/Supabase-pgvector-3ECF8E)
-![pydantic-ai](https://img.shields.io/badge/pydantic--ai-agent%20framework-E92063)
-![React](https://img.shields.io/badge/React-19-61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6)
+![Python](https://img.shields.io/badge/Python-3.13%2B-blue?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.123-009688?logo=fastapi&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4.1-412991?logo=openai&logoColor=white)
+![Celery](https://img.shields.io/badge/Celery-Redis-37814A?logo=celery&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-pgvector-3ECF8E?logo=supabase&logoColor=white)
+![pydantic-ai](https://img.shields.io/badge/pydantic--ai-agent%20framework-E92063?logo=pydantic&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 
 ---
 
@@ -18,6 +18,41 @@
 Ce projet est un **POC** qui illustre le fonctionnement réel de la conception d'un workflow complet autour de la gestion automatisée des tickets clients, capable d'orchestrer intelligemment toute requête utilisateur issue de situations concrètes et réelles. Pour simuler des cas réels, le projet prend l'exemple de la SNCF, qui gère quotidiennement des demandes clients exhaustives, répétitives et complexes. Notre cas d'usage est donc particulièrement pertinent.
 
 ## Architecture
+
+```mermaid
+flowchart LR
+    user[Utilisateur] --> browser[Browser\nReact chat app]
+
+    subgraph docker[Docker]
+        frontend[Frontend\nVite + React]
+        backend[Backend\nFastAPI + PydanticAI]
+        worker[Celery]
+        redis[(Redis)]
+        pgvector[(pgvector)]
+    end
+
+    subgraph supabase[Supabase]
+        db[(Postgres\névénements + tickets)]
+    end
+
+    openai[OpenAI\nGPT-4.1 + embeddings]
+    sources[Sources SNCF Connect\nPDFs + pages Web]
+    ingestion[Ingestion pipeline\nDocling, chunking, embeddings]
+
+    frontend -->|sert l'app| browser
+    browser -->|envoie un message| backend
+    backend -->|stocke le ticket| db
+    backend -->|met en file| redis
+    redis -->|déclenche| worker
+    worker -->|récupère passages pertinents| pgvector
+    worker -->|génère réponse en français| openai
+    worker -->|écrit le résultat| db
+    backend -->|poll résultat| db
+    backend -->|retourne réponse + trace workflow| browser
+    sources --> ingestion
+    ingestion -->|crée les embeddings| openai
+    ingestion -->|stocke les chunks| pgvector
+```
 
 L'architecture de l'application repose sur un stack *full-stack* (**backend** + **frontend**) dans lequel un workflow de nœuds agentiques de **PydanticAI** est orchestré côté backend, tandis que le frontend a pour objectif d'illustrer simplement ce workflow en action à travers un chat UI. Concrètement, des tickets sont envoyés à une API **FastAPI**, stockés dans **Supabase** (**PostgreSQL**), mis en file d'attente via **Redis**, puis traités de manière asynchrone par un worker **Celery**.
 
