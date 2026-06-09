@@ -11,13 +11,18 @@
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 
----
 
 ## Contexte
 
-Ce projet est un **P.O.C.** qui illustre le fonctionnement réel de la conception d'un workflow complet autour de la gestion automatisée des tickets clients, capable d'orchestrer intelligemment toute requête utilisateur issue de situations concrètes et réelles. Pour simuler des cas réels, le projet prend l'exemple de la SNCF, qui gère quotidiennement des demandes clients exhaustives, répétitives et complexes. Notre cas d'usage est donc particulièrement pertinent.
+Ce projet est un **P.O.C.** qui illustre le fonctionnement réel de la conception d'un workflow complet autour de la gestion automatisée des tickets clients, capable d'orchestrer intelligemment toute requête utilisateur issue de situations concrètes et réelles. Pour simuler des cas réels, le projet prend l'exemple de la **SNCF**, qui gère quotidiennement des demandes clients exhaustives, répétitives et complexes. Notre cas d'usage est donc particulièrement pertinent.
 
 ## Architecture
+
+Le schéma ci-dessous illustre comment les différents composants de l'application interagissent :
+
+
+<br>
+
 
 ```mermaid
 flowchart LR
@@ -54,6 +59,11 @@ flowchart LR
     ingestion -->|stocke les chunks| pgvector
 ```
 
+
+<br>
+
+<br>
+
 L'architecture de l'application repose sur un stack *full-stack* (**backend** + **frontend**) dans lequel un workflow de nœuds agentiques de **PydanticAI** est orchestré côté backend, tandis que le frontend a pour objectif d'illustrer simplement ce workflow en action à travers un chat UI. Concrètement, des tickets sont envoyés à une API **FastAPI**, stockés dans **Supabase** (**PostgreSQL**), mis en file d'attente via **Redis**, puis traités de manière asynchrone par un worker **Celery**.
 
 ## Workflow
@@ -77,12 +87,12 @@ flowchart LR
 **Réception**<br>
 Le ticket arrive via **FastAPI** et est stocké en base (**Supabase**).
 
-**Traitement async**<br>
-Le ticket est mis en file d'attente (**Redis**), un **worker Celery** le récupère et lance le workflow.
+**Traitement asynchrone des tasks**<br>
+Le ticket est mis en file d'attente dans une base de données intermédiaire (**Redis**), un **worker Celery** le récupère et lance le workflow de manière asynchrone.
 
 **Analyse** *(3 sous-agents en parallèle)*
 - **Classification d'intention** : L’IA (**PydanticAI** + **OpenAI**) détermine l’intention (ex: "conditions", "délais", "retard de train", "remboursement")
-- **Filtrage** : Détection de spam""
+- **Filtrage** : Détection de spams
 - **Routage** : Selon l’analyse, le ticket est fermé, escaladé à un humain, ou traité automatiquement.
 - **Génération de réponse** : Si traitement automatique, l’IA génère une réponse pertinente via **RAG**, en se basant sur la base de vecteurs **pgvector**.
 - **Envoi de réponse** : La réponse est envoyée au client ou le ticket est escaladé.
