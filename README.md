@@ -17,9 +17,14 @@
 
 Ce projet est un Proof of Concept (POC) illustre le fonctionnement réel de la conception d'un workflow complet autour de la gestion automatisée des tickets clients, capable d'orchestrer intelligemment toute requête utilisateur issue de situations concrètes et réelles. Pour simuler des cas réels, le projet prend l'exemple de la SNCF, qui gère quotidiennement des demandes clients exhaustives, répétitives et complexes. Notre cas d'usage est donc particulièrement pertinent.
 
-L'architecture repose sur une application full-stack (backend + frontend) dans laquelle des nœuds agentiques sont orchestrés côté backend, tandis que le frontend a pour objectif d'illustrer simplement ce workflow en action à travers une interface de chat. Concrètement, des tickets sont envoyés à une API FastAPI, stockés dans Supabase (PostgreSQL), mis en file d'attente via Redis, puis traités de manière asynchrone par un worker Celery.
+L'architecture repose sur une application full-stack (**backend** + **frontend**) dans laquelle des nœuds agentiques sont orchestrés côté backend, tandis que le frontend a pour objectif d'illustrer simplement ce workflow en action à travers une interface de chat. Concrètement, des tickets sont envoyés à une API **FastAPI**, stockés dans **Supabase** (**PostgreSQL**), mis en file d'attente via **Redis**, puis traités de manière asynchrone par un worker **Celery**.
 
-Ce projet est un Proof of Concept (POC) démontrant l'automatisation complète du traitement des tickets client. À la réception d'un email, trois analyses IA sont lancées en parallèle : classification, identification des tickets prioritaires, et génération de réponse. Le ticket est ensuite traité automatiquement ou escaladé à un agent humain selon le contexte. Chaque décision est tracée et accessible via l'API
+Chaque ticket traverse un workflow multi-nœuds comme illustre ci-dessous
+
+-- mettre la photo du workflow --
+
+
+— classification de l'intention, détection de spam, validation de l'actionnabilité, et génération d'une réponse ancrée via RAG sur une base de connaissances pgvector — avant qu'une réponse en français ne soit retournée au client.
 
 > *Ce prototype n'est pas en production. Il vise à prouver  que chaque composant fonctionne, que l'architecture est solide et scalable.*
 
