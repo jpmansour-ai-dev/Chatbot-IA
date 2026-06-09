@@ -120,38 +120,38 @@ system_prompt=(
 
 ### Test du pipeline RAG
 
-Visualisons le fonctionnement de l'application face a de vraies questions utilisateurs, et testons le workflow.
+Testons le workflow face à de vraies questions utilisateurs. Le principe est simple : 
+choisir une question dont la réponse figure dans la base de connaissances, et observer 
+ce que le pipeline RAG retourne.
 
-Le premier test du pipeline RAG est effectue de la maniere suivante : Choisir un topic interessant et pertinent qui figure quelque-part dans la base de connaissances, et questionner le pipeline RAG la-dessus.
-
-Par exemple, posons la question
-
-```python
-question_utilisateur=(
-    "Puis-je voyager avec mon chien dans le TGV ? "
-)
-```
-
-ou encore
+Par exemple :
 
 ```python
-question_utilisateur=(
-    "Un enfant de 3 ans a-t-il besoin d'un ticket ? "
-)
+"Puis-je voyager avec mon chien dans le TGV ?"
 ```
-Visualisons la réponse :
+
+```python
+"Un enfant de 3 ans a-t-il besoin d'un ticket ?"
+```
 
 ![RAG_2](assets/RAG_2.gif)
 
+<br>
 
-
-Testons ensuite sur des questions plus delicates :
+Testons ensuite sur une question plus délicate :
 
 ```python
-question_utilisateur=(
-    "Mon train avait 1h30 de retard, ai-je droit à une compensation ? "
-)
+"Mon train avait 1h30 de retard, ai-je droit à une compensation ?"
 ```
+
+![RAG_1](assets/RAG_1.gif)
+
+<br>
+
+#### Résultat
+
+Les réponses sont parfaitement pertinentes, et les chunks sélectionnés correspondent bien aux paragraphes identifiés au préalable dans chaque source. Les tests RAG étant concluants, testons à présent des messages spam.
+
 
 
 ![Démonstration du workflow](assets/demo.gif)
