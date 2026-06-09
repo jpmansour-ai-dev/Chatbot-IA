@@ -68,8 +68,7 @@ L'architecture de l'application repose sur un stack *full-stack* (**backend** + 
 
 ## Workflow
 
-Les demandes utilisateurs soumises via le chat UI, sont envoyes a une API, qui cause le declenchement de ce workflow, quipermettra l'automatisation du traitement, et est designe de la maniere suivante:
-Chaque ticket traverse un workflow multi-nœuds comme illustre ci-dessous
+Les demandes soumises via le chat sont envoyées à l'API, qui déclenche le workflow suivant :
 
 ```mermaid
 flowchart LR
@@ -92,6 +91,21 @@ Le ticket est mis en file d'attente dans une base de données intermédiaire (**
 
 **Analyse** *(3 sous-agents en parallèle)*
 - **Classification d'intention** : L’IA (**PydanticAI** + **OpenAI**) détermine l’intention (ex: "conditions", "délais", "retard de train", "remboursement")
+
+```python
+system_prompt=(
+    "You are a customer support agent for SNCF Connect. "
+    "Read the customer message and tell us two things:\n"
+    "1. What is the customer talking about: a general question, a product question, "
+    "a billing issue, or a refund request.\n"
+    "2. Does this need a human to handle it? Yes if the customer is clearly demanding "
+    "something specific — a refund, a compensation, disputing a charge. "
+    "No if they are just asking how something works.\n"
+    "Always reply in French."
+)
+```
+
+- **Détection de spam** : vérifie que le message provient d'un vrai humain.
 - **Filtrage** : Détection de spams
 - **Routage** : Selon l’analyse, le ticket est fermé, escaladé à un humain, ou traité automatiquement.
 - **Génération de réponse** : Si traitement automatique, l’IA génère une réponse pertinente via **RAG**, en se basant sur la base de vecteurs **pgvector**.
@@ -102,19 +116,13 @@ Le ticket est mis en file d'attente dans une base de données intermédiaire (**
 
 ---
 
-## Démonstration
+## Interface Chatbot IA
+
+
 
 ![Démonstration du workflow](assets/demo.gif)
 
 ---
-
-## Pourquoi c'est utile ?
-
-Les équipes de support client traitent chaque jour des tickets répétitifs : suivi de commande, demande de remboursement, problème de compte. Ce système IA automatise ce premier niveau de traitement :
-
-- Les questions courantes reçoivent une réponse immédiate, rédigée à partir de la base de connaissances interne de l'entreprise.
-- Les cas sensibles (remboursement, plainte) sont détectés automatiquement et transmis à un agent humain avec le contexte déjà préparé.
-- Les messages parasites (spam, bots) sont filtrés et fermés systématiquement.
 
 **Ce projet montre la capacité à concevoir, assembler et faire fonctionner un système IA complet.**
 
