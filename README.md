@@ -127,11 +127,11 @@ ce que le pipeline RAG retourne.
 Par exemple :
 
 ```python
-"Puis-je voyager avec mon chien dans le TGV ?"
+question_utilisateur = "Puis-je voyager avec mon chien dans le TGV ?"
 ```
 
 ```python
-"Un enfant de 3 ans a-t-il besoin d'un ticket ?"
+question_utilisateur = "Un enfant de 3 ans a-t-il besoin d'un ticket ?"
 ```
 
 ![RAG_2](assets/RAG_2.gif)
@@ -141,119 +141,37 @@ Par exemple :
 Testons ensuite sur une question plus délicate :
 
 ```python
-"Mon train avait 1h30 de retard, ai-je droit à une compensation ?"
+question_utilisateur = "Mon train avait 1h30 de retard, ai-je droit à une compensation ?"
 ```
 
 ![RAG_1](assets/RAG_1.gif)
 
-<br>
+### Résultat
 
-#### Résultat
+Les réponses sont parfaitement pertinentes, et les chunks sélectionnés correspondent
+bien aux paragraphes identifiés au préalable dans chaque source.
 
-Les réponses sont parfaitement pertinentes, et les chunks sélectionnés correspondent bien aux paragraphes identifiés au préalable dans chaque source. Les tests RAG étant concluants, testons à présent des messages spam.
+Les tests RAG étant concluants, testons à présent un message spam, puis un message
+nécessitant une intervention humaine :
 
-
-
-![Démonstration du workflow](assets/demo.gif)
-
----
-
-**Ce projet montre la capacité à concevoir, assembler et faire fonctionner un système IA complet.**
-
----
-
-## Ce que j'ai construit
-
+```python
+question_utilisateur = "Félicitations, vous avez remporté un iPhone !"
 ```
-Email client
-    │
-    ▼
-[FastAPI] ──────────────────────────────────► [Base de données Supabase]
-    │                                              (tickets + résultats)
-    ▼
-[Redis] (file d'attente)
-    │
-    ▼
-[Celery Worker]
-    │
-    ▼
-[Workflow Engine]
-    │
-    ├──► Classification de l'intention ──┐
-    ├──► Détection de spam              ├──► [Routeur]
-    └──► Validation du ticket ──────────┘        │
-                                                  ├── Question générale → [Génère réponse] ◄──► [Base vectorielle]
-                                                  ├── Remboursement     → Escalade humaine
-                                                  ├── Facturation       → Service facturation
-                                                  └── Spam              → Fermeture automatique
+
+![spam](assets/spam.gif)
+
+```python
+question_utilisateur = "Je voudrais un remboursement immédiatement !"
 ```
-                                                  
-![Architecture du workflow](assets/workflow.png)
 
-### Processus détaillé
+![escalade](assets/escalade.gif)
 
-1. Un ticket client est envoyé sur l'endpoint de l'API (pouvant être automatiquement transmis à l'aide d'un webhook)
-2. Le ticket est enregistré daans la base de données et publié dans la file d'attente Redis.
-3. Le worker Celery consomme la tâche et lance le moteur de workflow.
-4. Trois agents IA s'exécutent **en parallèle** : classification de l'intention, détection de spam, validation.
-5. Le routeur lit les résultats et choisit le traitement adapté.
-6. Pour les demandes plus spécifiques liées à l'entreprise, le système recherche dans la base de connaissances les 5 passages les plus proches sémantiquement, puis génère une réponse. *(principe du RAG — Retrieval-Augmented Generation)*
-7. La réponse et toutes les métadonnées sont sauvegardées et consultables via l'endpoint de l'API.
+### Résultat
 
----
+Les deux messages ont correctement été classifiés.
 
-## Stack technique
+## Conclusion
 
-### Backend
+Ce prototype démontre qu'il est possible d'automatiser intelligemment le traitement des tickets clients : les questions courantes sont répondues via RAG, les spams filtrés, et les cas sensibles escaladés à un humain.
 
-| Outil | Rôle |
-|-------|------|
-| **FastAPI** | Reçoit les tickets via HTTP et expose les résultats |
-| **Celery** | Exécute les workflows en arrière-plan, hors du cycle de requête |
-| **Redis** | File d'attente entre l'API et le worker |
-| **SQLAlchemy** | Accès structuré à la base de données PostgreSQL |
-
-### IA
-
-| Outil | Rôle |
-|-------|------|
-| **pydantic-ai** | Orchestre les agents IA avec des sorties structurées et typées |
-| **OpenAI GPT-4.1** | Modèle de langage utilisé pour l'analyse et la génération de réponses |
-| **OpenAI text-embedding-3-small** | Transforme le texte en vecteurs numériques pour la recherche sémantique |
-| **pgvector** | Extension PostgreSQL pour retrouver rapidement les documents les plus similaires |
-| **Supabase (PostgreSQL)** | Stockage des tickets, résultats et base de connaissances |
-
-### Infrastructure
-
-| Outil | Rôle |
-|-------|------|
-| **Docker Compose** | Orchestre les 3 conteneurs (API, worker, Redis) en une seule commande |
-| **uv** | Gestionnaire de dépendances Python rapide et reproductible |
-
----
-
-## Fonctionnalités clés
-
-- **Analyse en parallèle** — 3 agents IA s'exécutent simultanément sur chaque ticket, au lieu de tourner l'un après l'autre.
-- **Routage conditionnel** — le système choisit automatiquement le traitement adapté selon l'intention détectée : réponse générée, escalade humaine, transfert facturation, ou fermeture.
-- **RAG - Réponses ancrées dans des documents internes** — le système consulte la base de connaissances avant de rédiger, pour ne jamais inventer d'information.
-- **Architecture extensible en nœuds** — ajouter un nouveau type d'analyse se fait sans modifier le moteur existant.
-- **Compatible multi-fournisseurs IA** — OpenAI, Anthropic, Gemini, Azure, Bedrock et Ollama sont interchangeables sans changer la logique métier.
-- **Traçabilité complète** — intention, score de confiance, documents récupérés et réponse générée sont persistés en base et consultables via l'API.
-
----
-
-## Résultats & métriques
-
-| Indicateur | Valeur |
-|------------|--------|
-| Analyses IA par ticket | 3, exécutées en parallèle |
-| Documents récupérés par requête | 5, sélectionnés par similarité sémantique |
-| Dimensions des vecteurs d'embedding | 1 536 (text-embedding-3-small) |
-| Catégories d'intention reconnues | 4 (question générale, produit, facturation, remboursement) |
-| Fournisseurs IA interchangeables | 6 (OpenAI, Anthropic, Gemini, Azure, Bedrock, Ollama) |
-| Services Docker | 3 conteneurs indépendants avec healthcheck |
-
----
-
-*Workflow inspiré du cours [Datalumina GenAI Launchpad](https://datalumina.com). Tout le code de ce dépôt a été écrit indépendamment.*
+En pratique, cela réduit significativement la charge répétitive des équipes support, tout en gardant un humain dans la boucle là où c'est nécessaire.
