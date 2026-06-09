@@ -139,9 +139,19 @@ question_utilisateur=(
     "Un enfant de 3 ans a-t-il besoin d'un ticket ? "
 )
 ```
+Visualisons la réponse :
+
+![RAG_2](assets/RAG_2.gif)
 
 
 
+Testons ensuite sur des questions plus delicates :
+
+```python
+question_utilisateur=(
+    "Mon train avait 1h30 de retard, ai-je droit à une compensation ? "
+)
+```
 
 
 ![Démonstration du workflow](assets/demo.gif)
