@@ -15,7 +15,7 @@
 
 ## Contexte
 
-Ce projet est un **POC** qui illustre le fonctionnement réel de la conception d'un workflow complet autour de la gestion automatisée des tickets clients, capable d'orchestrer intelligemment toute requête utilisateur issue de situations concrètes et réelles. Pour simuler des cas réels, le projet prend l'exemple de la SNCF, qui gère quotidiennement des demandes clients exhaustives, répétitives et complexes. Notre cas d'usage est donc particulièrement pertinent.
+Ce projet est un **P.O.C.** qui illustre le fonctionnement réel de la conception d'un workflow complet autour de la gestion automatisée des tickets clients, capable d'orchestrer intelligemment toute requête utilisateur issue de situations concrètes et réelles. Pour simuler des cas réels, le projet prend l'exemple de la SNCF, qui gère quotidiennement des demandes clients exhaustives, répétitives et complexes. Notre cas d'usage est donc particulièrement pertinent.
 
 ## Architecture
 
@@ -36,7 +36,7 @@ flowchart LR
     end
 
     openai[OpenAI\nGPT-4.1 + embeddings]
-    sources[Sources SNCF Connect\nPDFs + pages Web]
+    sources[Knowledge Base\nPDFs + pages Web]
     ingestion[Ingestion pipeline\nDocling, chunking, embeddings]
 
     frontend -->|sert l'app| browser
