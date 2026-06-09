@@ -118,6 +118,30 @@ system_prompt=(
 
 ## Interface Chatbot IA
 
+### Test du pipeline RAG
+
+Visualisons le fonctionnement de l'application face a de vraies questions utilisateurs, et testons le workflow.
+
+Le premier test du pipeline RAG est effectue de la maniere suivante : Choisir un topic interessant et pertinent qui figure quelque-part dans la base de connaissances, et questionner le pipeline RAG la-dessus.
+
+Par exemple, posons la question
+
+```python
+question_utilisateur=(
+    "Puis-je voyager avec mon chien dans le TGV ? "
+)
+```
+
+ou encore
+
+```python
+question_utilisateur=(
+    "Un enfant de 3 ans a-t-il besoin d'un ticket ? "
+)
+```
+
+
+
 
 
 ![Démonstration du workflow](assets/demo.gif)
