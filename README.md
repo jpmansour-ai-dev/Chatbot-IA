@@ -1,15 +1,23 @@
-# Support Client IA
-
-**Prototype fonctionnel : système complet de traitement automatique des tickets client**
+# Assistant IA pour le support client
+**Présentation d'un prototype fonctionnel : système IA de traitement automatique des tickets client.**
 
 ![Python](https://img.shields.io/badge/Python-3.13%2B-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.123-009688)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4.1-412991)
+![Celery](https://img.shields.io/badge/Celery-Redis-37814A)
+![Supabase](https://img.shields.io/badge/Supabase-pgvector-3ECF8E)
+![pydantic-ai](https://img.shields.io/badge/pydantic--ai-agent%20framework-E92063)
+![React](https://img.shields.io/badge/React-19-61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6)
 
 ---
 
 ## Contexte
+
+Ce projet est un Proof of Concept (POC) illustre le fonctionnement réel de la conception d'un workflow complet autour de la gestion automatisée des tickets clients, capable d'orchestrer intelligemment toute requête utilisateur issue de situations concrètes et réelles. Pour simuler des cas réels, le projet prend l'exemple de la SNCF, qui gère quotidiennement des demandes clients exhaustives, répétitives et complexes. Notre cas d'usage est donc particulièrement pertinent.
+
+L'architecture repose sur une application full-stack (backend + frontend) dans laquelle des nœuds agentiques sont orchestrés côté backend, tandis que le frontend a pour objectif d'illustrer simplement ce workflow en action à travers une interface de chat. Concrètement, des tickets sont envoyés à une API FastAPI, stockés dans Supabase (PostgreSQL), mis en file d'attente via Redis, puis traités de manière asynchrone par un worker Celery.
 
 Ce projet est un Proof of Concept (POC) démontrant l'automatisation complète du traitement des tickets client. À la réception d'un email, trois analyses IA sont lancées en parallèle : classification, identification des tickets prioritaires, et génération de réponse. Le ticket est ensuite traité automatiquement ou escaladé à un agent humain selon le contexte. Chaque décision est tracée et accessible via l'API
 
