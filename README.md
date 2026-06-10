@@ -112,8 +112,6 @@ system_prompt=(
 - **Envoi de réponse** : La réponse est envoyée au client ou le ticket est escaladé.
 
 
-### Gains opérationnels
-
 ---
 
 ## Interface Chatbot IA
